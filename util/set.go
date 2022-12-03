@@ -3,7 +3,7 @@ package util
 var exists = struct{}{}
 
 type SetValue interface {
-	string | int
+	comparable
 }
 
 type Set[V SetValue] struct {
