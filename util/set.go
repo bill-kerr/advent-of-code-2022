@@ -2,29 +2,33 @@ package util
 
 var exists = struct{}{}
 
-type Set struct {
-	m map[int]struct{}
+type SetValue interface {
+	string | int
 }
 
-func NewSet() *Set {
-	s := &Set{}
-	s.m = make(map[int]struct{})
+type Set[V SetValue] struct {
+	m map[V]struct{}
+}
+
+func NewSet[V SetValue]() *Set[V] {
+	s := &Set[V]{}
+	s.m = make(map[V]struct{})
 	return s
 }
 
-func (s *Set) Add(value int) {
+func (s *Set[V]) Add(value V) {
 	s.m[value] = exists
 }
 
-func (s *Set) Remove(value int) {
+func (s *Set[V]) Remove(value V) {
 	delete(s.m, value)
 }
 
-func (s *Set) Has(value int) bool {
+func (s *Set[V]) Has(value V) bool {
 	_, ok := s.m[value]
 	return ok
 }
 
-func (s *Set) ToMap() map[int]struct{} {
+func (s *Set[V]) ToMap() map[V]struct{} {
 	return s.m
 }

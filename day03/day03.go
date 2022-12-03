@@ -60,8 +60,8 @@ func part1() {
 	fmt.Println(prioritySum)
 }
 
-func getPrioritySet(contents string) *util.Set {
-	set := util.NewSet()
+func getPrioritySet(contents string) *util.Set[int] {
+	set := util.NewSet[int]()
 
 	for _, c := range contents {
 		set.Add(getPriorityValue(c))
