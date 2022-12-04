@@ -1,9 +1,21 @@
 package main
 
 import (
-	"github.com/bill-kerr/advent-of-code-2022/day04"
+	"os"
+
+	"github.com/bill-kerr/advent-of-code-2022/day03"
+	"github.com/bill-kerr/advent-of-code-2022/util"
 )
 
 func main() {
-	day04.Run()
+	if len(os.Args) >= 3 {
+		t := os.Args[1]
+		name := os.Args[2]
+	
+		if t == "-t" && name != "" {
+			util.CreateTemplate(name)
+		}
+	} else {
+		day03.Run()
+	}
 }
