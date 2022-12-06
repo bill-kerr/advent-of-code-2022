@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"strconv"
 )
 
 func OpenAndRead(filename string) (lines []string) {
@@ -35,4 +36,22 @@ func SumSlice(slice []int) int {
 		sum += val
 	}
 	return sum
+}
+
+func Reverse[S ~[]E, E any](s S) {
+	for i, j := 0, len(s) - 1; i < j; i, j = i + 1, j - 1 {
+		s[i], s[j] = s[j], s[i]
+	}
+}
+
+func Atoi(str string) int {
+	val, err := strconv.Atoi(str)
+	if err != nil {
+		log.Fatal("Failed to convert string to integer")
+	}
+	return val
+}
+
+func Rtoi(r rune) int {
+	return int(r - '0')
 }
