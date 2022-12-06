@@ -32,3 +32,7 @@ func (s *Set[V]) Has(value V) bool {
 func (s *Set[V]) ToMap() map[V]struct{} {
 	return s.m
 }
+
+func (s *Set[V]) Size() int {
+	return len(s.m)
+}
