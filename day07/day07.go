@@ -82,23 +82,6 @@ func (d *Directory) Traverse(onVisit func(directory *Directory)) {
 	}
 }
 
-func sumDirSizes(root *Directory, sizeLimit int) int {
-	total := 0
-
-	for _, dir := range root.dirs {
-		dirSize := dir.GetSize()
-		fmt.Println("dirSize for dir", dir.name, "is", dirSize)
-
-		if dirSize <= sizeLimit {
-			total += dirSize
-		} 
-			
-		total += sumDirSizes(dir, sizeLimit)
-	}
-
-	return total
-}
-
 func parseInput(lines []string) *Directory {
 	root := newDirectory("/", nil)
 	current := root
@@ -142,7 +125,16 @@ func parseInput(lines []string) *Directory {
 func part1(lines []string) {
 	root := parseInput(lines)
 
-	sum := sumDirSizes(root, 100000)
+	sum := 0
+
+	root.Traverse(func (d *Directory) {
+		size := d.GetSize()
+
+		if (size <= 100000) {
+			sum += size
+		}
+	})
+
 	fmt.Println(sum)
 }
 
