@@ -23,6 +23,13 @@ func newTree(height, x, y int, row, col []int) *Tree {
 	scoreLeft := 0
 	scoreRight := 0
 
+	// If it's on the edge, we know it's visible and has a scenic score of 0
+	if x == 0 || y == 0 || x == len(row) - 1 || y == len(col) - 1 {
+		tree.Visible = true
+		tree.ScenicScore = 0
+		return tree
+	}
+
 	// Visible from left?
 	for i := x - 1; i >= 0; i-- {
 		scoreLeft++
