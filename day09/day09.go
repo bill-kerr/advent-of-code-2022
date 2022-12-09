@@ -7,69 +7,60 @@ import (
 	"github.com/bill-kerr/advent-of-code-2022/util"
 )
 
-type Direction int
 
-const (
-	Up Direction = iota
-	Down
-	Left
-	Right
-)
-
-type Position struct {
+type Vector struct {
 	X int
 	Y int
 }
 
-func newPosition(x, y int) *Position {
-	return &Position{X: x, Y: y}
+func newVector(x, y int) *Vector {
+	return &Vector{X: x, Y: y}
 }
 
-func (p *Position) ToString() string {
-	return fmt.Sprintf("%v, %v", p.X, p.Y)
+func (v *Vector) ToString() string {
+	return fmt.Sprintf("%v, %v", v.X, v.Y)
 }
 
-func (p *Position) IsTouching(otherPosition *Position) bool {
-	inX := p.X >= otherPosition.X - 1 && p.X <= otherPosition.X + 1
-	inY := p.Y >= otherPosition.Y - 1 && p.Y <= otherPosition.Y + 1
+func (v *Vector) IsTouching(otherPosition *Vector) bool {
+	inX := v.X >= otherPosition.X - 1 && v.X <= otherPosition.X + 1
+	inY := v.Y >= otherPosition.Y - 1 && v.Y <= otherPosition.Y + 1
 
 	return inX && inY
 }
 
-func (p *Position) DirectionTo(otherPosition *Position) *Position {
+func (v *Vector) IsEqual(otherVector *Vector) bool {
+	return v.X == otherVector.X && v.Y == otherVector.Y
+}
+
+func (v *Vector) DirectionTo(otherPosition *Vector) *Vector {
 	x := 0
 	y := 0
 
-	if p.X > otherPosition.X {
+	if v.X > otherPosition.X {
 		x = -1
-	} else if p.X < otherPosition.X {
+	} else if v.X < otherPosition.X {
 		x = 1
 	}
 
-	if p.Y > otherPosition.Y {
+	if v.Y > otherPosition.Y {
 		y = -1
-	} else if p.Y < otherPosition.Y {
+	} else if v.Y < otherPosition.Y {
 		y = 1
 	}
 
-	return newPosition(x, y)
-}
-
-type Movement struct {
-	Direction Direction
-	Distance int
+	return newVector(x, y)
 }
 
 type Rope struct {
-	Knots []*Position
+	Knots []*Vector
 	TailPositions *util.Set[string]
 }
 
 func newRope(numKnots int) *Rope {
-	knots := make([]*Position, numKnots)
+	knots := make([]*Vector, numKnots)
 
 	for i := 0; i < numKnots; i++ {
-		knots[i] = newPosition(0, 0)
+		knots[i] = newVector(0, 0)
 	}
 
 	tailPositions := util.NewSet[string]()
@@ -78,19 +69,14 @@ func newRope(numKnots int) *Rope {
 	return &Rope{Knots: knots, TailPositions: tailPositions}
 }
 
-func (r *Rope) Move(movement *Movement) {
-	unitVector := 1
-	if movement.Direction == Down || movement.Direction == Left {
-		unitVector = -1
-	}
+func (r *Rope) Move(movement *Vector) {
+	destination := newVector(r.Knots[0].X + movement.X, r.Knots[0].Y + movement.Y)
 
-	for i := 0; i < movement.Distance; i++ {
-		// Move the head
-		if movement.Direction == Right || movement.Direction == Left {
-			r.Knots[0].X += unitVector
-		} else {
-			r.Knots[0].Y += unitVector
-		}
+	// While we're not at the destination, move the head
+	for !r.Knots[0].IsEqual(destination) {
+		headMovement := r.Knots[0].DirectionTo(destination)
+		r.Knots[0].X += headMovement.X
+		r.Knots[0].Y += headMovement.Y
 
 		// For each knot that is not the head, make sure it's touching the one before it
 		for j := 1; j < len(r.Knots); j++ {
@@ -108,34 +94,36 @@ func (r *Rope) Move(movement *Movement) {
 	}
 }
 
-func getDirection(str string) Direction {
+func getDirection(str string) *Vector {
 	switch str {
 	case "R":
-		return Right
+		return newVector(1, 0)
 	case "U":
-		return Up
+		return newVector(0, 1)
 	case "D":
-		return Down
+		return newVector(0, -1)
 	case "L":
-		return Left
+		return newVector(-1, 0)
 	}
 
 	panic("Invalid direction!")
 }
 
-func parseMovements(lines []string) []*Movement {
-	movements := make([]*Movement, len(lines))
+func parseMovements(lines []string) []*Vector {
+	movements := make([]*Vector, len(lines))
 
 	for i, line := range lines {
 		info := strings.Split(line, " ")
+		direction := getDirection(info[0])
+		distance := util.Atoi(info[1])
 
-		movements[i] = &Movement{Direction: getDirection(info[0]), Distance: util.Atoi(info[1])}
+		movements[i] = newVector(direction.X * distance, direction.Y * distance)
 	}
 
 	return movements
 }
 
-func part1(movements []*Movement) {
+func part1(movements []*Vector) {
 	rope := newRope(2)
 
 	for _, movement := range movements {
@@ -145,7 +133,7 @@ func part1(movements []*Movement) {
 	fmt.Println(rope.TailPositions.Size())
 }
 
-func part2(movements []*Movement) {
+func part2(movements []*Vector) {
 	rope := newRope(10)
 
 	for _, movement := range movements {
