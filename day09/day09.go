@@ -21,6 +21,11 @@ func (v *Vector) ToString() string {
 	return fmt.Sprintf("%v, %v", v.X, v.Y)
 }
 
+func (v *Vector) Add(otherVector *Vector) {
+	v.X += otherVector.X
+	v.Y += otherVector.Y
+}
+
 func (v *Vector) IsTouching(otherPosition *Vector) bool {
 	inX := v.X >= otherPosition.X - 1 && v.X <= otherPosition.X + 1
 	inY := v.Y >= otherPosition.Y - 1 && v.Y <= otherPosition.Y + 1
@@ -75,15 +80,13 @@ func (r *Rope) Move(movement *Vector) {
 	// While we're not at the destination, move the head
 	for !r.Knots[0].IsEqual(destination) {
 		headMovement := r.Knots[0].DirectionTo(destination)
-		r.Knots[0].X += headMovement.X
-		r.Knots[0].Y += headMovement.Y
+		r.Knots[0].Add(headMovement)
 
 		// For each knot that is not the head, make sure it's touching the one before it
 		for j := 1; j < len(r.Knots); j++ {
 			for !r.Knots[j].IsTouching(r.Knots[j - 1]) {
 				tailMovement := r.Knots[j].DirectionTo(r.Knots[j - 1])
-				r.Knots[j].X += tailMovement.X
-				r.Knots[j].Y += tailMovement.Y
+				r.Knots[j].Add(tailMovement)
 	
 				// If this is the tail of the rope, update its visited positions
 				if j == len(r.Knots) - 1 {
