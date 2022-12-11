@@ -1,6 +1,6 @@
 package day11
 
-var monkee0 *Monkee = &Monkee{
+var monkey0 *Monkey = &Monkey{
 	Items: []int{
 		97,
 		81,
@@ -9,31 +9,31 @@ var monkee0 *Monkee = &Monkee{
 		91,
 		61,
 	},
-	Operation: func(old int) int { return old * 7 },
+	Operation: &Operation{Operator: Multiply, Magnitude: 7},
 	Divisor:   11,
 	Targets:   [2]int{5, 6},
 }
 
-var monkee1 *Monkee = &Monkee{
+var monkey1 *Monkey = &Monkey{
 	Items: []int{
 		88,
 		62,
 		68,
 		90,
 	},
-	Operation: func(old int) int { return old * 17 },
+	Operation: &Operation{Operator: Multiply, Magnitude: 17},
 	Divisor:   19,
 	Targets:   [2]int{4, 2},
 }
 
-var monkee2 *Monkee = &Monkee{
+var monkey2 *Monkey = &Monkey{
 	Items:     []int{74, 87},
-	Operation: func(old int) int { return old + 2 },
+	Operation: &Operation{Operator: Add, Magnitude: 2},
 	Divisor:   5,
 	Targets:   [2]int{7, 4},
 }
 
-var monkee3 *Monkee = &Monkee{
+var monkey3 *Monkey = &Monkey{
 	Items: []int{
 		53,
 		81,
@@ -43,19 +43,19 @@ var monkee3 *Monkee = &Monkee{
 		99,
 		75,
 	},
-	Operation: func(old int) int { return old + 1 },
+	Operation: &Operation{Operator: Add, Magnitude: 1},
 	Divisor:   2,
 	Targets:   [2]int{2, 1},
 }
 
-var monkee4 *Monkee = &Monkee{
+var monkey4 *Monkey = &Monkey{
 	Items:     []int{57},
-	Operation: func(old int) int { return old + 6 },
+	Operation: &Operation{Operator: Add, Magnitude: 6},
 	Divisor:   13,
 	Targets:   [2]int{7, 0},
 }
 
-var monkee5 *Monkee = &Monkee{
+var monkey5 *Monkey = &Monkey{
 	Items: []int{
 		54,
 		84,
@@ -66,12 +66,12 @@ var monkee5 *Monkee = &Monkee{
 		75,
 		70,
 	},
-	Operation: func(old int) int { return old * old },
+	Operation: &Operation{Operator: Square, Magnitude: 0},
 	Divisor:   7,
 	Targets:   [2]int{6, 3},
 }
 
-var monkee6 *Monkee = &Monkee{
+var monkey6 *Monkey = &Monkey{
 	Items: []int{
 		95,
 		79,
@@ -79,60 +79,60 @@ var monkee6 *Monkee = &Monkee{
 		68,
 		78,
 	},
-	Operation: func(old int) int { return old + 3 },
+	Operation: &Operation{Operator: Add, Magnitude: 3},
 	Divisor:   3,
 	Targets:   [2]int{1, 3},
 }
 
-var monkee7 *Monkee = &Monkee{
+var monkey7 *Monkey = &Monkey{
 	Items:     []int{61, 97, 67},
-	Operation: func(old int) int { return old + 4 },
+	Operation: &Operation{Operator: Add, Magnitude: 4},
 	Divisor:   17,
 	Targets:   [2]int{0, 5},
 }
 
-var Monkees []*Monkee = []*Monkee{
-	monkee0,
-	monkee1,
-	monkee2,
-	monkee3,
-	monkee4,
-	monkee5,
-	monkee6,
-	monkee7,
+var Monkeys []*Monkey = []*Monkey{
+	monkey0,
+	monkey1,
+	monkey2,
+	monkey3,
+	monkey4,
+	monkey5,
+	monkey6,
+	monkey7,
 }
 
-var sampleMonkee0 *Monkee = &Monkee{
+var sampleMonkey0 *Monkey = &Monkey{
 	Items:     []int{79, 98},
-	Operation: func(old int) int { return old * 19 },
+	Operation: &Operation{Operator: Multiply, Magnitude: 19},
 	Divisor:   23,
 	Targets:   [2]int{2, 3},
 }
 
-var sampleMonkee1 *Monkee = &Monkee{
+var sampleMonkey1 *Monkey = &Monkey{
 	Items:     []int{54, 65, 75, 74},
-	Operation: func(old int) int { return old + 6 },
+	Operation: &Operation{Operator: Add, Magnitude: 6},
 	Divisor:   19,
 	Targets:   [2]int{2, 0},
 }
 
-var sampleMonkee2 *Monkee = &Monkee{
+var sampleMonkey2 *Monkey = &Monkey{
 	Items:     []int{79, 60, 97},
-	Operation: func(old int) int { return old * old },
+	Operation: &Operation{Operator: Square, Magnitude: 0},
 	Divisor:   13,
 	Targets:   [2]int{1, 3},
 }
 
-var sampleMonkee3 *Monkee = &Monkee{
+var sampleMonkey3 *Monkey = &Monkey{
 	Items:     []int{74},
-	Operation: func(old int) int { return old + 3 },
+	Operation: &Operation{Operator: Add, Magnitude: 3},
 	Divisor:   17,
 	Targets:   [2]int{0, 1},
 }
 
-var SampleMonkees []*Monkee = []*Monkee{
-	sampleMonkee0,
-	sampleMonkee1,
-	sampleMonkee2,
-	sampleMonkee3,
+var SampleMonkeys []*Monkey = []*Monkey{
+	sampleMonkey0,
+	sampleMonkey1,
+	sampleMonkey2,
+	sampleMonkey3,
 }

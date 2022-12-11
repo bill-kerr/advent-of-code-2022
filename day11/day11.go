@@ -5,74 +5,103 @@ import (
 	"sort"
 )
 
-type Monkee struct {
+type Operator int
+
+const (
+	Add Operator = iota
+	Multiply
+	Square
+)
+
+type Operation struct {
+	Operator Operator
+	Magnitude int
+}
+
+type Monkey struct {
 	Items []int
-	Operation func(old int) int
+	Operation *Operation
 	Divisor int
 	Targets [2]int
 	Inspections int
 }
 
-func (m *Monkee) Catch(item int) {
+func (m *Monkey) Catch(item int) {
 	m.Items = append(m.Items, item)
 }
 
-func (m *Monkee) Throw(item int, target *Monkee) {
-	target.Catch(item)
+func (m *Monkey) Throw(target *Monkey) {
+	target.Catch(m.Items[0])
 	m.Items = m.Items[1:]
 }
 
-func (m *Monkee) Inspect() int {
+func (m *Monkey) Inspect() int {
 	m.Inspections++
-	return m.Operation(m.Items[0])
+
+	if m.Operation.Operator == Add {
+		return m.Items[0] + m.Operation.Magnitude
+	} else if m.Operation.Operator == Multiply {
+		return m.Items[0] * m.Operation.Magnitude
+	}
+	return m.Items[0] * m.Items[0]
 }
 
-func (m *Monkee) GetTarget(worryLevel int) int {
-	if worryLevel % m.Divisor == 0 {
+func (m *Monkey) GetTarget(afterInspect func(worryLevel int) int) int {
+	m.Inspections++
+
+	worryLevel := 0
+	if m.Operation.Operator == Add {
+		worryLevel = m.Items[0] + m.Operation.Magnitude
+	} else if m.Operation.Operator == Multiply {
+		worryLevel = m.Items[0] * m.Operation.Magnitude
+	} else {
+		worryLevel = m.Items[0] * m.Items[0]
+	}
+
+	newWorryLevel := afterInspect(worryLevel)
+
+	m.Items[0] = newWorryLevel
+
+	if newWorryLevel % m.Divisor == 0 {
 		return m.Targets[0]
 	}
 
 	return m.Targets[1]
 }
 
-func simulateRounds(monkees []*Monkee, numRounds int, afterInspect func(old int) int) int {
+func simulateRounds(monkeys []*Monkey, numRounds int, afterInspect func(old int) int) int {
 	round := 1
 
 	for round <= numRounds {
-		for _, monkee := range monkees {
-			for len(monkee.Items) > 0 {
-				worryLevel := monkee.Inspect()
-	
-				after := afterInspect(worryLevel)
-
-				targetIndex := monkee.GetTarget(after)
-				targetMonkee := monkees[targetIndex]
-	
-				monkee.Throw(after, targetMonkee)
+		for _, monkey := range monkeys {
+			for len(monkey.Items) > 0 {
+				targetIndex := monkey.GetTarget(afterInspect)
+				targetMonkey := monkeys[targetIndex]
+				monkey.Throw(targetMonkey)
 			}
 		}
 
 		round++
 	}
 
-	sort.Slice(monkees, func (i, j int) bool {
-		return monkees[i].Inspections > monkees[j].Inspections
+	sort.Slice(monkeys, func (i, j int) bool {
+		return monkeys[i].Inspections > monkeys[j].Inspections
 	})
 
-	return monkees[0].Inspections * monkees[1].Inspections
+	return monkeys[0].Inspections * monkeys[1].Inspections
 }
 
-func part1(monkees []*Monkee) {
+func part1(monkees []*Monkey) {
 	monkeyBusiness := simulateRounds(monkees, 20, func(old int) int { return old / 3 })
 	fmt.Println(monkeyBusiness)
 }
 
-func part2(monkees []*Monkee) {
+func part2(monkees []*Monkey) {
 	monkeyBusiness := simulateRounds(monkees, 10000, func(old int) int { return old })
 	fmt.Println(monkeyBusiness)
 }
 
 func Run() {
-	part1(Monkees)
+	part1(Monkeys)
 	// part2(SampleMonkees)
 }
