@@ -18,6 +18,7 @@ type Operation struct {
 	Magnitude int
 }
 
+
 type Monkey struct {
 	Items []int
 	Operation *Operation
@@ -26,57 +27,50 @@ type Monkey struct {
 	Inspections int
 }
 
+func (m *Monkey) Op() {
+	if m.Operation.Operator == Add {
+		m.Items[0] += m.Operation.Magnitude
+	} else if m.Operation.Operator == Multiply {
+		m.Items[0] *= m.Operation.Magnitude
+	} else {
+		m.Items[0] *= m.Items[0]
+	}
+}
+
+func (m *Monkey) Throw(target *Monkey) {
+	item := m.Items[0]
+	m.Items = m.Items[1:]
+	target.Catch(item)
+}
+
 func (m *Monkey) Catch(item int) {
 	m.Items = append(m.Items, item)
 }
 
-func (m *Monkey) Throw(target *Monkey) {
-	target.Catch(m.Items[0])
-	m.Items = m.Items[1:]
-}
-
-func (m *Monkey) Inspect() int {
-	m.Inspections++
-
-	if m.Operation.Operator == Add {
-		return m.Items[0] + m.Operation.Magnitude
-	} else if m.Operation.Operator == Multiply {
-		return m.Items[0] * m.Operation.Magnitude
-	}
-	return m.Items[0] * m.Items[0]
-}
-
-func (m *Monkey) GetTarget(afterInspect func(worryLevel int) int) int {
-	m.Inspections++
-
-	worryLevel := 0
-	if m.Operation.Operator == Add {
-		worryLevel = m.Items[0] + m.Operation.Magnitude
-	} else if m.Operation.Operator == Multiply {
-		worryLevel = m.Items[0] * m.Operation.Magnitude
-	} else {
-		worryLevel = m.Items[0] * m.Items[0]
-	}
-
-	newWorryLevel := afterInspect(worryLevel)
-
-	m.Items[0] = newWorryLevel
-
-	if newWorryLevel % m.Divisor == 0 {
+func (m *Monkey) GetTargetIndex() int {
+	if m.Items[0] % m.Divisor == 0 {
 		return m.Targets[0]
 	}
-
 	return m.Targets[1]
 }
 
-func simulateRounds(monkeys []*Monkey, numRounds int, afterInspect func(old int) int) int {
+func simulateRounds(monkeys []*Monkey, numRounds int, onInspect func (val int, product int) int) int {
 	round := 1
+
+	product := 1
+	for _, monkey := range monkeys {
+		product *= monkey.Divisor
+	}
 
 	for round <= numRounds {
 		for _, monkey := range monkeys {
 			for len(monkey.Items) > 0 {
-				targetIndex := monkey.GetTarget(afterInspect)
-				targetMonkey := monkeys[targetIndex]
+				monkey.Inspections++
+				
+				monkey.Op()
+				monkey.Items[0] = onInspect(monkey.Items[0], product)
+
+				targetMonkey := monkeys[monkey.GetTargetIndex()]
 				monkey.Throw(targetMonkey)
 			}
 		}
@@ -92,16 +86,20 @@ func simulateRounds(monkeys []*Monkey, numRounds int, afterInspect func(old int)
 }
 
 func part1(monkees []*Monkey) {
-	monkeyBusiness := simulateRounds(monkees, 20, func(old int) int { return old / 3 })
+	monkeyBusiness := simulateRounds(monkees, 20, func(val int, product int) int {
+		return val / 3
+	})
 	fmt.Println(monkeyBusiness)
 }
 
 func part2(monkees []*Monkey) {
-	monkeyBusiness := simulateRounds(monkees, 10000, func(old int) int { return old })
+	monkeyBusiness := simulateRounds(monkees, 10000, func(val int, product int) int { 
+		return val % product 
+	})
 	fmt.Println(monkeyBusiness)
 }
 
 func Run() {
 	part1(Monkeys)
-	// part2(SampleMonkees)
+	part2(Monkeys)
 }
